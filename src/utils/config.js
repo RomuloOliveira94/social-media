@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 1000,
   headers: {
     "Content-Type": "application/json",
@@ -10,7 +10,7 @@ export const api = axios.create({
 });
 
 export const apiWithFiles = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 1000,
   headers: {
     "Content-Type": "multipart/form-data",
@@ -18,4 +18,4 @@ export const apiWithFiles = axios.create({
   },
 });
 
-export const uploads = "http://localhost:5000/uploads";
+export const uploads = import.meta.env.VITE_UPLOADS_URL;
