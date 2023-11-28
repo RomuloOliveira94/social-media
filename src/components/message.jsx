@@ -21,5 +21,5 @@ export const Message = ({ msg, type }) => {
 
 Message.propTypes = {
   msg: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
+  type: PropTypes.string,
 };
