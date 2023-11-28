@@ -13,7 +13,8 @@ export const profile = createAsyncThunk("user/profile", async (thunkAPI) => {
   try {
     const response = await api.get("/users/profile", {
       headers: {
-        Authorization: "Bearer " + JSON.parse(localStorage.getItem("user"))?.token,
+        Authorization:
+          "Bearer " + JSON.parse(localStorage.getItem("user"))?.token,
       },
     });
     return response.data;
@@ -26,7 +27,12 @@ export const update = createAsyncThunk(
   "user/update",
   async (user, thunkAPI) => {
     try {
-      const response = await apiWithFiles.post("/users/update", user);
+      const response = await apiWithFiles.post("/users/update", user, {
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(localStorage.getItem("user"))?.token,
+        },
+      });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.errors[0]);

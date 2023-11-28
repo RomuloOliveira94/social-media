@@ -70,9 +70,7 @@ export const EditProfile = () => {
               : `${uploads}/users/${user.profileImage}`
           }
           alt="user"
-          className="border rounded-full border-gray-200 shadow-sm"
-          width="150px"
-          height="150px"
+          className="border rounded-full border-gray-200 shadow-sm w-48 h-48"
         />
       )}
       <form
