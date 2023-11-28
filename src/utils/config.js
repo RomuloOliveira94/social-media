@@ -5,12 +5,17 @@ export const api = axios.create({
   timeout: 1000,
   headers: {
     "Content-Type": "application/json",
-    "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user"))?.token,
+    Authorization: "Bearer " + JSON.parse(localStorage.getItem("user"))?.token,
   },
 });
 
-export const uploads = axios.create({
-  baseURL: "http://localhost:5000/uploads",
+export const apiWithFiles = axios.create({
+  baseURL: "http://localhost:5000/api",
+  timeout: 1000,
+  headers: {
+    "Content-Type": "multipart/form-data",
+    Authorization: "Bearer " + JSON.parse(localStorage.getItem("user"))?.token,
+  },
 });
 
-
+export const uploads = "http://localhost:5000/uploads";

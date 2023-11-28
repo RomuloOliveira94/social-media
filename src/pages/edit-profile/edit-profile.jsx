@@ -21,26 +21,20 @@ export const EditProfile = () => {
     dispatch(profile());
   }, [dispatch]);
 
-    useEffect(() => {
-      if (user) {
-        setProfile((prev) => ({
-          ...prev,
-          name: user.name,
-          email: user.email,
-          bio: user.bio,
-          profileImage: user.profileImage,
-        }));
-      }
-    }, [user]);
+  useEffect(() => {
+    if (user) {
+      setProfile((prev) => ({
+        ...prev,
+        name: user.name,
+        email: user.email,
+        bio: user.bio,
+      }));
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userData = {
-      name: "",
-      bio: "",
-      profileImage: "",
-      password: "",
-    };
+    let userData = {};
     if (profileUser.name) userData.name = profileUser.name;
     if (profileUser.bio) userData.bio = profileUser.bio;
     if (profileUser.profileImage) {
@@ -48,7 +42,12 @@ export const EditProfile = () => {
     }
     if (profileUser.password) userData.password = profileUser.password;
 
-    dispatch(update(userData));
+    const formData = new FormData();
+    for (let key in userData) {
+      formData.append(key, userData[key]);
+    }
+    dispatch(update(formData));
+
     setTimeout(() => {
       dispatch(resetMessage());
     }, 3000);
@@ -58,20 +57,19 @@ export const EditProfile = () => {
     <div className="flex flex-col items-center justify-center p-4 bg-gray-100 w-11/12 md:w-1/2 mx-auto my-10 border border-gray-100 shadow-md gap-4">
       <h2>Edite seus dados</h2>
       <p>Adicione uma imagem de perfil e nos conte mais sobre sua pessoa...</p>,
-      {user.profileImage ||
-        (profileUser.previewImage && (
-          <img
-            src={
-              profileUser.previewImage
-                ? profileUser.previewImage
-                : uploads + "/users/" + user.profileImage
-            }
-            alt="user"
-            className="border rounded-full border-gray-200 shadow-sm"
-            width="150px"
-            height="150px"
-          />
-        ))}
+      {(user.profileImage || profileUser.previewImage) && (
+        <img
+          src={
+            profileUser.previewImage
+              ? profileUser.previewImage
+              : `${uploads}/users/${user.profileImage}`
+          }
+          alt="user"
+          className="border rounded-full border-gray-200 shadow-sm"
+          width="150px"
+          height="150px"
+        />
+      )}
       <form
         onSubmit={handleSubmit}
         className="flex flex-col items-center justify-center gap-5 w-full"

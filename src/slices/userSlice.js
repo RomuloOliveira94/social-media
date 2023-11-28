@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { api } from "../utils/config";
+import { api, apiWithFiles } from "../utils/config";
 
 const initialState = {
   user: {},
@@ -22,7 +22,9 @@ export const update = createAsyncThunk(
   "user/update",
   async (user, thunkAPI) => {
     try {
-      const response = await api.post("/users/update", user);
+      console.log(user);
+      const response = await apiWithFiles.post("/users/update", user);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.errors[0]);
