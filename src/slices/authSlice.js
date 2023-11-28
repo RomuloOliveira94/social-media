@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { authService } from "../services/authService";
+import { api } from "../utils/config";
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -14,17 +14,19 @@ const initialState = {
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (user, thunkAPI) => {
-    const response = await authService.registerUser(user);
-
-    //error handling
-    if (response.errors.length > 0) {
-      return thunkAPI.rejectWithValue(
-        typeof response.errors === "string"
-          ? response.errors
-          : response.errors[0]
-      );
+    try {
+      const response = await api.post("/users/register", user);
+      if (response.data._id) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+      }
+      return response.data;
+    } catch (error) {
+      const e =
+        typeof error.response.data.errors === "string"
+          ? error.response.data.errors
+          : error.response.data.errors[0];
+      return thunkAPI.rejectWithValue(e);
     }
-    return response;
   }
 );
 
@@ -32,25 +34,22 @@ export const registerUser = createAsyncThunk(
 export const loginUser = createAsyncThunk(
   "auth/login",
   async (user, thunkAPI) => {
-    const response = await authService.loginUser(user);
-
-    //error handling
-    if (response.errors.length > 0) {
-      return thunkAPI.rejectWithValue(
-        typeof response.errors === "string"
-          ? response.errors
-          : response.errors[0]
-      );
+    try {
+      const response = await api.post("/users/login", user);
+      console.log(response.data)
+      if (response.data._id) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+      }
+      return response.data;
+    } catch (error) {
+      const e =
+        typeof error.response.data.errors === "string"
+          ? error.response.data.errors
+          : error.response.data.errors[0];
+      return thunkAPI.rejectWithValue(e);
     }
-    return response;
   }
 );
-
-//logout
-export const logoutUser = createAsyncThunk("auth/logout", async () => {
-  authService.logoutUser();
-  return null;
-});
 
 const authSlice = createSlice({
   name: "auth",
@@ -62,7 +61,7 @@ const authSlice = createSlice({
       state.success = false;
     },
     logout: (state) => {
-      authService.logoutUser();
+      localStorage.removeItem("user");
       state.user = null;
     },
   },
@@ -82,12 +81,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = null;
         state.user = action.payload;
-      })
-      .addCase(logoutUser.pending, (state) => {
-        state.loading = false;
-        state.error = null;
-        state.user = null;
-        state.success = true;
       })
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
