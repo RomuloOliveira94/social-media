@@ -40,6 +40,18 @@ export const update = createAsyncThunk(
   }
 );
 
+export const details = createAsyncThunk(
+  "user/details",
+  async (id, thunkAPI) => {
+    try {
+      const response = await api.get("/users/" + id);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.errors[0]);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -88,6 +100,23 @@ const userSlice = createSlice({
       .addCase(update.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
+        state.success = false;
+      })
+      .addCase(details.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(details.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.loading = false;
+        state.error = null;
+        state.success = true;
+      })
+      .addCase(details.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+        state.user = null;
         state.success = false;
       });
   },
