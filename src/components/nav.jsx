@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, Camera, Home, Search, User } from "lucide-react";
 
@@ -11,11 +11,11 @@ const Nav = () => {
   const { user } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const history = useNavigate();
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/");
+    history("/");
   };
 
   let links = [];
@@ -37,8 +37,10 @@ const Nav = () => {
   }
 
   //clean up
-  useState(() => {
-    dispatch(reset());
+  useEffect(() => {
+    return () => {
+      dispatch(reset());
+    };
   }, [dispatch]);
 
   let [open, setOpen] = useState(false);

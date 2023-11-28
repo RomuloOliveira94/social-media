@@ -11,7 +11,11 @@ const initialState = {
 
 export const profile = createAsyncThunk("user/profile", async (thunkAPI) => {
   try {
-    const response = await api.get("/users/profile");
+    const response = await api.get("/users/profile", {
+      headers: {
+        Authorization: "Bearer " + JSON.parse(localStorage.getItem("user"))?.token,
+      },
+    });
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.errors[0]);
@@ -22,9 +26,7 @@ export const update = createAsyncThunk(
   "user/update",
   async (user, thunkAPI) => {
     try {
-      console.log(user);
       const response = await apiWithFiles.post("/users/update", user);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.errors[0]);
@@ -38,6 +40,12 @@ const userSlice = createSlice({
   reducers: {
     resetMessage: (state) => {
       state.message = null;
+    },
+    reset: (state) => {
+      state.error = null;
+      state.success = false;
+      state.loading = false;
+      state.user = null;
     },
   },
   extraReducers: (builder) => {
@@ -79,5 +87,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { resetMessage } = userSlice.actions;
+export const { resetMessage, reset } = userSlice.actions;
 export default userSlice.reducer;

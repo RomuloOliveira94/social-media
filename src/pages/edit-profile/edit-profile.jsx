@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { profile, resetMessage, update } from "../../slices/userSlice";
 import { Message } from "../../components/message";
+import { useAuth } from "../../hooks/useAuth";
 
 export const EditProfile = () => {
   const [profileUser, setProfile] = useState({
@@ -16,21 +17,25 @@ export const EditProfile = () => {
 
   const dispatch = useDispatch();
   const { user, loading, message, error } = useSelector((state) => state.user);
+  const { auth } = useAuth();
 
   useEffect(() => {
-    dispatch(profile());
-  }, [dispatch]);
+    async function fetchData() {
+      
+      dispatch(profile());
+    }
+    fetchData();
+  }, [dispatch, auth]);
 
   useEffect(() => {
-    if (user) {
-      setProfile((prev) => ({
-        ...prev,
+    if (user && auth) {
+      setProfile(() => ({
         name: user.name,
         email: user.email,
         bio: user.bio,
       }));
     }
-  }, [user]);
+  }, [auth, user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -123,7 +128,7 @@ export const EditProfile = () => {
         <label className="w-5/6">
           <span>Alterar senha:</span>
           <input
-            className="w-full mt-2"
+            className="w-full p-2 mt-2"
             type="password"
             placeholder="Senha"
             onChange={(e) =>

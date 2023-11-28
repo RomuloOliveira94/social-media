@@ -96,7 +96,7 @@ const authSlice = createSlice({
         state.error = null;
         state.user = action.payload;
         state.success = true;
-      });
+      })
   },
 });
 
